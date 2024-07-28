@@ -33,10 +33,15 @@ const userSchema = mongoose.Schema(
     },
     accessToken: {
       type: String,
+      default: null,
     },
     isActivate: {
       type: Boolean,
       default: false,
+    },
+    token : {
+      type : String,
+      default : null
     }
   },
   {

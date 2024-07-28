@@ -28,7 +28,15 @@ export const registerUser = async (req, res, next) => {
     const generatedToken = createToken({email})
     const activationLink = process.env.SERVER_URL+"/activation/"+generatedToken
     const verifyCode = verificationCode()
-   const user = await User.create({...req.body, username, password : passwordHased});
+   const user = await User.create(
+    {
+        ...req.body,
+        username,
+        password : passwordHased,
+        token : generatedToken,
+        accessToken : verifyCode
+    }
+);
     if (!user) {
         return next(createError(400, "Please Enter All info And Try Again."))
     }
