@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 /**
  * User Schema Design
  */
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,

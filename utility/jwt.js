@@ -22,8 +22,15 @@ export const createToken = (payload, exp="1d") => {
  * @returns 
  */
 export const verifyToken = (token) => {
+    let tokenVerify = null
+    jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+        if (err) {
+           return tokenVerify = null 
+        }else{
+          return  tokenVerify = decoded
+        }
+      });
 
-    const verify_data = jwt.verify(token, process.env.JWT_SECRET)
+      return tokenVerify
 
-    return verify_data
 }

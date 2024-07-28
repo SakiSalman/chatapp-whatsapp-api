@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
-import { registerUser } from "../controllers/userContoller.js";
+import { activateAccount, activateAccountByCode, registerUser } from "../controllers/userContoller.js";
 
 
 const __dirname = path.resolve();
@@ -24,6 +24,8 @@ const storage = multer.diskStorage({
 
 const image = multer({ storage }).array("images", 10);
 router.post("/register", registerUser);
+router.post("/activation/", activateAccountByCode);
+router.get("/activation/:token", activateAccount);
 
 
 
