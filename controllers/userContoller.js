@@ -1,6 +1,6 @@
 import { AccountActivationEmail } from "../email/accountActivationEmail.js";
 import User from "../models/userModel.js";
-import { hasPassword } from "../utility/bcrypt.js";
+import { checkPasswod, hasPassword } from "../utility/bcrypt.js";
 import createError from "../utility/createErroe.js";
 import { convertDashToDot, convertDotToDash } from "../utility/helper.js";
 import { createToken, verifyToken } from "../utility/jwt.js";
@@ -75,7 +75,7 @@ export const activateAccount = async (req, res, next) => {
         statusCode : 200
     })
    } catch (error) {
-    res.status(200).json({
+    res.status(404).json({
         message : null,
         statusCode : 404
     })
@@ -101,12 +101,42 @@ export const activateAccountByCode = async (req, res, next) => {
 
     res.status(200).json({
         user : updateUser,
-        statisCode : 200
+        statusCode : 200
     })
    } catch (error) {
     res.status(200).json({
         user : null,
-        statisCode : 404
+        statusCode : 404
     })
    }
+}
+
+
+export const loginuser = async (req, res, next) => {
+    try {
+        const {email, password} = req.body
+        if (!email || !password) {
+            return next(createError(400, "Any of field can not be empty"))
+        }
+
+        const user = await User.findOne({email})
+        if (!user) {
+            return next(createError(400, "No User Found! Please Register!"))
+        }
+        const checkedPasswod = await checkPasswod(password, user.password)
+        if (!checkedPasswod) {
+            return next(createError(400, "Wrong Password!"))
+        }
+        res.status(200).json({
+            user : user,
+            message : "Login Success!",
+            statusCode : 200
+        })
+
+    } catch (error) {
+        res.status(404).json({
+            message : null,
+            statusCode : 404
+        })
+    }
 }
