@@ -153,8 +153,8 @@ export const loginuser = async (req, res, next) => {
         if (!checkedPasswod) {
             return next(createError(400, "Wrong Password!"))
         }
-        const newToken = createToken({email})
-        const updateUser = await User.findByIdAndUpdate(user._id, {email, password})
+        const newToken = createToken({email, password})
+        const updateUser = await User.findByIdAndUpdate(user._id, {tokrn : newToken}).select(["-password", "-isActivate", "-accessToken"])
         res.status(200).json({
             user : updateUser,
             message : "Login Success!",
@@ -166,5 +166,34 @@ export const loginuser = async (req, res, next) => {
             message : null,
             statusCode : 404
         })
+    }
+}
+
+
+/**
+ * Get Specific User
+ */
+
+export const getUser = async(req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(" ")?.[1]
+        // console.log(token);
+        if (!token) {
+        return next(createError(404, "User Not Authenticate. PLease Login!"))
+        }
+        const verifiedToken = verifyToken(token)
+        if (!verifiedToken) {
+            return next(createError(404, "User Not Authenticate. PLease Login!"))
+        }
+        const user = await User.findOne({email : verifiedToken.email, isActivate : true}).select(["-password", "-isActivate", "-accessToken"])
+        if (!user) {
+            return next(createError(404, "User Not Authenticate. PLease Login!"))
+        }
+        res.status(200).json({
+            user : user,
+            statusCode : 200
+        })
+    } catch (error) {
+        next(createError(404, "Server Error!"))
     }
 }
