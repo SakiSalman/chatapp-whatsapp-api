@@ -6,6 +6,33 @@ import { convertDashToDot, convertDotToDash } from "../utility/helper.js";
 import { createToken, verifyToken } from "../utility/jwt.js";
 import { verificationCode } from "../utility/math.js";
 import { createUsername, validateEmail } from "../utility/validator.js";
+import jwt from 'jsonwebtoken'
+
+
+
+export const getAllUsers = async (req, res, next) => {
+    try {
+        const {token} = req.params
+    
+        const convetedToken = token
+        const verifiedToken = verifyToken(convetedToken)
+        if (!verifiedToken?.email) {
+            return next(createError(400, "You Are Not Authenticated!"))
+        }
+        const matchedUser = await User.findOne({email : verifiedToken.email})
+        if (!matchedUser) {
+            return next(createError(400, "You Are Unauthenticated!"))
+        }
+        const allUser = await User.find({isActivate : true,_id: { $ne: matchedUser._id }}).select(["username", "name"]).exec();
+        res.status(200).json({
+            statusCode : 200,
+            data : allUser
+        })
+    } catch (error) {
+       return next(createError(400, "Server Error!"))
+    }
+};
+
 
 export const registerUser = async (req, res, next) => {
     const {name, password, email} = req.body
@@ -57,7 +84,6 @@ export const activateAccount = async (req, res, next) => {
        return next(createError(404, "Invalid Token!")) 
     }
     const verifiedToken = verifyToken(convertDashToDot(token))
-    console.log(verifiedToken);
     if (!verifiedToken || verifiedToken.email == "undefined" || verifiedToken.email == null) {
         return next(createError(404, "Invalid Token!")) 
     }
@@ -127,8 +153,10 @@ export const loginuser = async (req, res, next) => {
         if (!checkedPasswod) {
             return next(createError(400, "Wrong Password!"))
         }
+        const newToken = createToken({email})
+        const updateUser = await User.findByIdAndUpdate(user._id, {email, password})
         res.status(200).json({
-            user : user,
+            user : updateUser,
             message : "Login Success!",
             statusCode : 200
         })

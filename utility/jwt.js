@@ -25,6 +25,7 @@ export const verifyToken = (token) => {
     let tokenVerify = null
     jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
         if (err) {
+          console.log(err);
            return tokenVerify = null 
         }else{
           return  tokenVerify = decoded
