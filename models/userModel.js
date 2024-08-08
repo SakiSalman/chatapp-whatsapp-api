@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    bio :{
+      type : String,
+      default : "Hey i am available"
+    },
     accessToken: {
       type: String,
       default: null,

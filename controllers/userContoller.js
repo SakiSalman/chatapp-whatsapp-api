@@ -153,8 +153,8 @@ export const loginuser = async (req, res, next) => {
         if (!checkedPasswod) {
             return next(createError(400, "Wrong Password!"))
         }
-        const newToken = createToken({email, password})
-        const updateUser = await User.findByIdAndUpdate(user._id, {tokrn : newToken}).select(["-password", "-isActivate", "-accessToken"])
+        const newToken = createToken({email, password})        
+        const updateUser = await User.findByIdAndUpdate(user._id, {token : newToken}).select(["-password", "-isActivate", "-accessToken"])
         res.status(200).json({
             user : updateUser,
             message : "Login Success!",
@@ -177,7 +177,7 @@ export const loginuser = async (req, res, next) => {
 export const getUser = async(req, res, next) => {
     try {
         const token = req.headers.authorization.split(" ")?.[1]
-        // console.log(token);
+        console.log(token);
         if (!token) {
         return next(createError(404, "User Not Authenticate. PLease Login!"))
         }

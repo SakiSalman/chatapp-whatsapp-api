@@ -6,6 +6,7 @@ import path from "path"
 import cookieParser from "cookie-parser";
 import errorHandler from "./middlewares/errorHandler.js";
 import useUserRouter from './routes/user.js'
+import useChatRouter from './routes/chat.js'
 import mongoDBConnect from "./config/db.js";
 // init express
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, "/api/public")));
 const PORT = process.env.PORT || 8000;
 
 app.use(`${process.env.apiPrefix}/user`, useUserRouter)
+app.use(`${process.env.apiPrefix}/chat`, useChatRouter)
 
 // express error handler
 app.use(errorHandler);
