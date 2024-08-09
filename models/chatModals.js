@@ -9,7 +9,7 @@ const chatSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    reviverId: {
+    receiverId: {
       type: String,
       trim: true,
     },

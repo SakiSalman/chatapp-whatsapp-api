@@ -25,8 +25,8 @@ const storage = multer.diskStorage({
 
 const image = multer({ storage }).array("images", 10);
 // use verify token
-// router.use(tokenVerify);
+router.use(tokenVerify);
 
-router.get('/', getAllChat);
 router.post('/', createChats);
+router.get('/:id', getAllChat);
 export default router;
